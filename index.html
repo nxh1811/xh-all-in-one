@@ -527,6 +527,8 @@
                 '/comparison',
                 '/bulk-downloader',
                 '/downloader',
+                '/zalo',
+                '/zalo-tools',
                 '/autorun',
                 '/auto/comment',
                 '/auto-post-fb',
@@ -571,7 +573,6 @@
                 /checkout/i,
                 /satisfied\s+customers/i,
                 /reviews?/i,
-                /zalo\s+tools?/i,
                 /youtube\s+tools?/i,
                 /other\s+products?/i,
                 /osint\s+tools?/i,
@@ -582,14 +583,12 @@
                 /duckrace/i,
                 /aurora\s+os/i,
                 /\bwin\s*(11|10|xp|98|96)\b/i,
-                /youtube/i,
-                /zalo/i
+                /youtube/i
             ];
 
             window.XH_REMOVED_PATHS = [
                 '/checkout',
                 '/products',
-                '/zalo',
                 '/youtube-subs',
                 '/search',
                 '/ip-info',
@@ -915,7 +914,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.0',
+                version: '2.1.2',
                 browser: 'chrome'
             };
 
@@ -1134,11 +1133,15 @@
                 document.querySelectorAll('img').forEach(image => {
                     const src = image.getAttribute('src') || '';
                     const alt = image.getAttribute('alt') || '';
-                    const rect = image.getBoundingClientRect();
-                    const looksLikeBrand =
-                        /logo|xh|all in one/i.test(src + ' ' + alt) ||
-                        (rect.width <= 260 && rect.height <= 180 && image.closest('aside, header, nav, main'));
-                    if (looksLikeBrand && !/chrome|firefox|edge/i.test(src + ' ' + alt)) {
+                    const parentText = image.parentElement?.textContent || '';
+                    const isUserAvatar =
+                        /scontent|fbcdn|profile|avatar|picture/i.test(src + ' ' + alt) ||
+                        image.closest('.ant-avatar, [class*="avatar"], [class*="profile"], [aria-label*="account" i], header');
+                    const isBrandSlot =
+                        image.classList.contains('xh-dashboard-logo') ||
+                        /logo|xh all in one|fb aio extension|fb aio/i.test(src + ' ' + alt + ' ' + parentText) ||
+                        (image.closest('aside, nav') && image.getBoundingClientRect().width <= 96);
+                    if (isBrandSlot && !isUserAvatar && !/chrome|firefox|edge/i.test(src + ' ' + alt)) {
                         image.setAttribute('src', window.XH_BRAND.logo);
                         image.setAttribute('alt', `${window.XH_BRAND.name} logo`);
                     }
