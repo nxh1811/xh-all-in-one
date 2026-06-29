@@ -239,6 +239,19 @@
                 color: var(--xh-text);
             }
 
+            body.xh-light-mode {
+                --xh-bg: #f4fbf8;
+                --xh-panel: #ffffff;
+                --xh-panel-soft: rgba(255, 255, 255, 0.88);
+                --xh-border: rgba(24, 134, 154, 0.2);
+                --xh-text: #102124;
+                --xh-muted: #50656a;
+                background:
+                    radial-gradient(circle at top left, rgba(37, 169, 187, 0.18), transparent 28rem),
+                    linear-gradient(135deg, #f5fffc 0%, #eef8f2 48%, #f8fbff 100%) !important;
+                color: var(--xh-text);
+            }
+
             #root,
             .ant-layout,
             .ant-layout-content,
@@ -255,6 +268,21 @@
             aside {
                 background: linear-gradient(180deg, #071b20 0%, #081514 100%) !important;
                 border-right: 1px solid var(--xh-border) !important;
+            }
+
+            body.xh-light-mode .ant-layout-sider,
+            body.xh-light-mode aside {
+                background: linear-gradient(180deg, #e9fbf7 0%, #f6fff9 100%) !important;
+                color: var(--xh-text) !important;
+            }
+
+            body.xh-light-mode .ant-menu,
+            body.xh-light-mode .ant-menu-sub,
+            body.xh-light-mode .ant-card,
+            body.xh-light-mode .ant-table,
+            body.xh-light-mode .ant-modal-content,
+            body.xh-light-mode .ant-drawer-content {
+                color: var(--xh-text) !important;
             }
 
             .ant-menu-item-selected,
@@ -278,6 +306,39 @@
             .xh-hidden-module,
             .xh-hidden-section,
             .xh-hidden-announcement {
+                display: none !important;
+            }
+
+            .ant-menu-item[title='Tính năng'],
+            .ant-menu-item[title='Tự động hoá'],
+            .ant-menu-item[title='Tự động hóa'],
+            .ant-menu-item[title='Công cụ'],
+            .ant-menu-item[title='Trò chơi'],
+            .ant-menu-submenu[title='Tính năng'],
+            .ant-menu-submenu[title='Tự động hoá'],
+            .ant-menu-submenu[title='Tự động hóa'],
+            .ant-menu-submenu[title='Công cụ'],
+            .ant-menu-submenu[title='Trò chơi'],
+            .ant-menu-item:has(a[href*='#/features']),
+            .ant-menu-item:has(a[href*='#/autorun']),
+            .ant-menu-item:has(a[href*='#/auto/comment']),
+            .ant-menu-item:has(a[href*='#/auto-post-fb']),
+            .ant-menu-item:has(a[href*='#/apis']),
+            .ant-menu-item:has(a[href*='#/n8n']),
+            .ant-menu-item:has(a[href*='#/it-tools']),
+            .ant-menu-item:has(a[href*='#/online-tools']),
+            .ant-menu-item:has(a[href*='#/wheel-of-names']),
+            .ant-menu-item:has(a[href*='#/duckrace']),
+            .ant-menu-submenu:has(a[href*='#/features']),
+            .ant-menu-submenu:has(a[href*='#/autorun']),
+            .ant-menu-submenu:has(a[href*='#/auto/comment']),
+            .ant-menu-submenu:has(a[href*='#/auto-post-fb']),
+            .ant-menu-submenu:has(a[href*='#/apis']),
+            .ant-menu-submenu:has(a[href*='#/n8n']),
+            .ant-menu-submenu:has(a[href*='#/it-tools']),
+            .ant-menu-submenu:has(a[href*='#/online-tools']),
+            .ant-menu-submenu:has(a[href*='#/wheel-of-names']),
+            .ant-menu-submenu:has(a[href*='#/duckrace']) {
                 display: none !important;
             }
 
@@ -520,7 +581,6 @@
 
             window.XH_ALLOWED_PATHS = new Set([
                 '/',
-                '/features',
                 '/vip',
                 '/updates',
                 '/coming-soon',
@@ -551,20 +611,14 @@
                 '/hide-profile-sections',
                 '/get-access-token',
                 '/shortcuts',
-                '/FAQ',
-                '/tutorial',
-                '/support',
-                '/logs',
-                '/storage-manager',
-                '/hard-refresh',
                 '/settings',
-                '/ext-updated',
-                '/disclaimer'
+                '/ext-updated'
             ]);
 
             window.XH_REMOVED_PATTERNS = [
                 /pricing/i,
                 /price/i,
+                /features?/i,
                 /checkout/i,
                 /satisfied\s+customers/i,
                 /reviews?/i,
@@ -577,23 +631,39 @@
                 /wheelofnames/i,
                 /duckrace/i,
                 /aurora\s+os/i,
-                /tự\s*động\s*h[oó]a/i,
-                /tu\s*dong\s*hoa/i,
                 /\bautomation\b/i,
                 /\bautorun\b/i,
-                /\btự\s*chạy\b/i,
-                /\btu\s*chay\b/i,
-                /^bình\s*luận$/i,
-                /^binh\s*luan$/i,
-                /^đăng\s*bài$/i,
-                /^dang\s*bai$/i,
                 /^apis?$/i,
                 /^n8n$/i,
                 /\bwin\s*(11|10|xp|98|96)\b/i,
                 /youtube/i
             ];
 
+            window.XH_REMOVED_LABELS = new Set([
+                'tinh nang',
+                'features',
+                'tu dong hoa',
+                'automation',
+                'tu chay',
+                'autorun',
+                'dang bai',
+                'apis',
+                'api',
+                'n8n',
+                'cong cu',
+                'tools',
+                'utils',
+                'tro choi',
+                'games',
+                'pricing',
+                'bang gia'
+            ]);
+
+            window.XH_HELP_LABELS = new Set(['tro giup', 'help']);
+            window.XH_SETTINGS_LABELS = new Set(['cai dat', 'settings']);
+
             window.XH_REMOVED_PATHS = [
+                '/features',
                 '/checkout',
                 '/products',
                 '/youtube-subs',
@@ -603,6 +673,16 @@
                 '/auto-post-fb',
                 '/apis',
                 '/n8n',
+                '/FAQ',
+                '/faq',
+                '/tutorial',
+                '/support',
+                '/logs',
+                '/storage-manager',
+                '/hard-refresh',
+                '/disclaimer',
+                '/source-code',
+                '/donate',
                 '/ip-info',
                 '/ip-location',
                 '/github-osint',
@@ -621,6 +701,9 @@
                 '/web-timer',
                 '/it-tools',
                 '/online-tools',
+                '/notes',
+                '/shortcuts',
+                '/source',
                 '/cyberchef',
                 '/webcrack',
                 '/de4js',
@@ -926,7 +1009,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.5',
+                version: '2.1.6',
                 browser: 'chrome'
             };
 
@@ -1044,8 +1127,16 @@
             window.applyXHModuleCleanup = function applyXHModuleCleanup() {
                 const removedPatterns = window.XH_REMOVED_PATTERNS;
                 const removedPaths = window.XH_REMOVED_PATHS;
-                const shouldRemoveText = text => removedPatterns.some(pattern => pattern.test(text || ''));
-                const shouldRemoveHref = href => {
+                const normalizeText = value =>
+                    String(value || '')
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/đ/g, 'd')
+                        .replace(/Đ/g, 'D')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                        .toLowerCase();
+                const getPathFromHref = href => {
                     if (!href) return false;
                     let path = href;
                     try {
@@ -1056,25 +1147,67 @@
                     if (String(path).includes('#/')) {
                         path = String(path).slice(String(path).indexOf('#/') + 1).split('?')[0];
                     }
-                    return removedPaths.some(removedPath => path === removedPath || path.startsWith(`${removedPath}/`));
+                    return String(path).split('?')[0] || '/';
                 };
+                const shouldRemovePath = path =>
+                    typeof path === 'string' &&
+                    removedPaths.some(removedPath => path === removedPath || path.startsWith(`${removedPath}/`));
+                const shouldRemoveText = text => {
+                    const normalized = normalizeText(text);
+                    if (!normalized) return false;
+                    if (window.XH_REMOVED_LABELS.has(normalized)) return true;
+                    for (const label of window.XH_REMOVED_LABELS) {
+                        if (normalized.startsWith(`${label} `)) return true;
+                    }
+                    return removedPatterns.some(pattern => pattern.test(text || '') || pattern.test(normalized));
+                };
+                const isSettingsText = text => window.XH_SETTINGS_LABELS.has(normalizeText(text));
+                const closestMenuNode = element =>
+                    element.closest(
+                        'li, .ant-menu-item, .ant-menu-submenu, .ant-menu-submenu-title, .ant-dropdown-menu-item, [role="menuitem"], [class*="menu-item"], [class*="submenu"]'
+                    );
+                const hideElement = element => {
+                    if (!element) return;
+                    element.classList.add('xh-hidden-module');
+                    element.setAttribute('aria-hidden', 'true');
+                    element.setAttribute('data-xh-removed', 'true');
+                    element.remove();
+                };
+
+                document.querySelectorAll('[title], [aria-label], [data-menu-id]').forEach(element => {
+                    const label = [element.getAttribute('title'), element.getAttribute('aria-label'), element.textContent]
+                        .filter(Boolean)
+                        .join(' ');
+                    if (shouldRemoveText(label)) hideElement(closestMenuNode(element) || element);
+                });
 
                 document.querySelectorAll('a[href]').forEach(anchor => {
                     const text = anchor.textContent || '';
-                    if (shouldRemoveHref(anchor.getAttribute('href')) || shouldRemoveText(text)) {
-                        const row = anchor.closest(
-                            'li, .ant-menu-item, .ant-menu-submenu, .ant-dropdown-menu-item, .ant-card, [role="menuitem"]'
-                        );
-                        (row || anchor).classList.add('xh-hidden-module');
-                        anchor.setAttribute('tabindex', '-1');
-                        anchor.setAttribute('aria-hidden', 'true');
+                    const path = getPathFromHref(anchor.getAttribute('href'));
+                    const isHelpSettings =
+                        shouldRemoveText(anchor.closest('li, .ant-menu-submenu, [role="menuitem"]')?.textContent) &&
+                        isSettingsText(text);
+                    if (!isHelpSettings && (shouldRemovePath(path) || shouldRemoveText(text))) {
+                        hideElement(closestMenuNode(anchor) || anchor.closest('.ant-card, section, article') || anchor);
+                    }
+                    if (isHelpSettings) {
+                        anchor.setAttribute('href', '#/settings');
                     }
                 });
 
-                document.querySelectorAll('li, .ant-menu-item, .ant-menu-submenu, .ant-card, section, article').forEach(
+                document.querySelectorAll('li, .ant-menu-item, .ant-menu-submenu, .ant-card, section, article, [role="menuitem"]').forEach(
                     element => {
                         const text = (element.textContent || '').replace(/\s+/g, ' ').trim();
-                        if (shouldRemoveText(text)) element.classList.add('xh-hidden-module');
+                        const normalized = normalizeText(text);
+                        if (window.XH_HELP_LABELS.has(normalized)) {
+                            element.querySelectorAll('a[href]').forEach(anchor => {
+                                if (shouldRemovePath(getPathFromHref(anchor.getAttribute('href')))) {
+                                    hideElement(closestMenuNode(anchor) || anchor);
+                                }
+                            });
+                            return;
+                        }
+                        if (shouldRemoveText(text)) hideElement(element);
                     }
                 );
 
@@ -1088,15 +1221,77 @@
                     }
                     if (!shouldRemoveText(text)) return;
                     const section = node.parentElement?.closest('section, .ant-card, .ant-row, .ant-list, article');
-                    if (section) section.classList.add('xh-hidden-section');
+                    if (section) hideElement(section);
                 });
 
                 const hashPath = window.location.hash.replace(/^#/, '').split('?')[0] || '/';
                 const browserPath = window.location.pathname;
                 const activePath = browserPath === '/' ? hashPath : browserPath;
-                if (removedPaths.some(removedPath => activePath === removedPath || activePath.startsWith(`${removedPath}/`))) {
+                if (shouldRemovePath(activePath)) {
                     window.history.replaceState(null, '', `${window.location.origin}/#/`);
                 }
+            };
+
+            window.installXHRouteGuard = function installXHRouteGuard() {
+                if (window.__XH_ROUTE_GUARD_INSTALLED) return;
+                window.__XH_ROUTE_GUARD_INSTALLED = true;
+
+                const getPath = href => {
+                    try {
+                        const url = new URL(href, window.location.origin);
+                        return (url.hash.replace(/^#/, '').split('?')[0] || url.pathname || '/').split('?')[0];
+                    } catch (error) {
+                        return String(href || '').replace(/^#/, '').split('?')[0] || '/';
+                    }
+                };
+                const isRemoved = path =>
+                    typeof path === 'string' &&
+                    window.XH_REMOVED_PATHS.some(removedPath => path === removedPath || path.startsWith(`${removedPath}/`));
+
+                document.addEventListener(
+                    'click',
+                    event => {
+                        const anchor = event.target?.closest?.('a[href]');
+                        if (!anchor) return;
+                        if (!isRemoved(getPath(anchor.getAttribute('href')))) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        window.history.replaceState(null, '', `${window.location.origin}/#/`);
+                        window.applyXHUX?.();
+                    },
+                    true
+                );
+
+                window.addEventListener('hashchange', () => {
+                    const path = window.location.hash.replace(/^#/, '').split('?')[0] || '/';
+                    if (isRemoved(path)) window.history.replaceState(null, '', `${window.location.origin}/#/`);
+                });
+            };
+
+            window.applyXHTheme = function applyXHTheme() {
+                let darkMode = true;
+                try {
+                    const keys = [
+                        'xh-all-in-one-extension',
+                        'xH all in one-extension',
+                        'facebook-all-in-one-extension',
+                        'fb-all-in-one-extension',
+                        'fb-aio-extension',
+                        'fbaio-extension'
+                    ];
+                    for (const key of keys) {
+                        const raw = localStorage.getItem(key);
+                        if (!raw) continue;
+                        const parsed = JSON.parse(raw);
+                        const persist = parsed?.state?.persist || parsed?.persist;
+                        if (typeof persist?.darkMode === 'boolean') {
+                            darkMode = persist.darkMode;
+                            break;
+                        }
+                    }
+                } catch (error) {}
+                document.body.classList.toggle('xh-light-mode', !darkMode);
+                document.documentElement.dataset.xhTheme = darkMode ? 'dark' : 'light';
             };
 
             window.applyXHDashboard = function applyXHDashboard() {
@@ -1176,12 +1371,14 @@
                 window.applyXHExtensionState();
                 window.applyXHBranding();
                 window.applyXHModuleCleanup();
+                window.applyXHTheme();
                 window.applyXHChrome();
                 window.applyXHDashboard();
                 window.removeXHInstallPrompts();
             };
 
             window.installXHBranding = function installXHBranding() {
+                window.installXHRouteGuard();
                 window.applyXHUX();
                 new MutationObserver(() => window.applyXHUX()).observe(document.body, {
                     childList: true,
