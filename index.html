@@ -67,7 +67,7 @@
                 const RESPONSE_PREFIX = 'aio-contentscript-sendto-pagescript';
                 const MANIFEST = {
                     name: 'xH all in one',
-                    version: '2.1.21',
+                    version: '2.1.22',
                     browser: 'chrome'
                 };
 
@@ -83,6 +83,39 @@
                             try {
                                 window.chrome.runtime.lastError = message ? { message } : null;
                             } catch (error) {}
+                        };
+
+                        const normalizeBridgePayload = rawMessage => {
+                            if (!rawMessage || typeof rawMessage !== 'object') return rawMessage;
+
+                            const nested =
+                                rawMessage.data && typeof rawMessage.data === 'object'
+                                    ? rawMessage.data
+                                    : null;
+
+                            if (rawMessage.action === 'aio-runInBackground' && nested) {
+                                return normalizeBridgePayload(nested);
+                            }
+
+                            const source =
+                                nested && (nested.fnPath || nested.params) ? nested : rawMessage;
+
+                            if (
+                                source.action === 'fb_allInOne_runFunc' ||
+                                source.fnPath ||
+                                source.params
+                            ) {
+                                return {
+                                    fnPath: source.fnPath || (nested && nested.fnPath) || '',
+                                    params: Array.isArray(source.params)
+                                        ? source.params
+                                        : nested && Array.isArray(nested.params)
+                                          ? nested.params
+                                          : []
+                                };
+                            }
+
+                            return rawMessage;
                         };
 
                         const sendThroughContentScript = (message, callback, timeout = 30000) => {
@@ -128,7 +161,7 @@
                                         detail: {
                                             uuid,
                                             event: 'aio-runInBackground',
-                                            data: message
+                                            data: normalizeBridgePayload(message)
                                         }
                                     })
                                 );
@@ -1150,7 +1183,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.21',
+                version: '2.1.22',
                 browser: 'chrome'
             };
 
