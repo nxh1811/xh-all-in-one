@@ -22,6 +22,45 @@
         <link rel="mask-icon" href="./icon.svg" color="#333333" />
         <meta name="theme-color" content="#333333" />
 
+        <script>
+            (() => {
+                const legacyHosts = new Set([
+                    'fbxh-all-in-one.org',
+                    'xh-all-in-one.org',
+                    'fb-aio.github.io',
+                    'fbaio.org'
+                ]);
+                const currentOrigin = window.location.origin;
+                const normalizeLegacyUrl = value => {
+                    if (typeof value !== 'string') return value;
+                    try {
+                        const url = new URL(value, currentOrigin);
+                        if (legacyHosts.has(url.hostname)) {
+                            return `${currentOrigin}${url.pathname}${url.search}${url.hash}`;
+                        }
+                    } catch {
+                        return value;
+                    }
+                    return value;
+                };
+                const originalAssign = window.location.assign.bind(window.location);
+                const originalReplace = window.location.replace.bind(window.location);
+                window.location.assign = value => originalAssign(normalizeLegacyUrl(value));
+                window.location.replace = value => originalReplace(normalizeLegacyUrl(value));
+                window.addEventListener(
+                    'beforeunload',
+                    event => {
+                        const nextUrl = normalizeLegacyUrl(document.activeElement?.href || '');
+                        if (nextUrl && nextUrl !== document.activeElement?.href) {
+                            event.preventDefault();
+                            window.location.href = nextUrl;
+                        }
+                    },
+                    { capture: true }
+                );
+            })();
+        </script>
+
         <link
             rel="preload"
             href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
