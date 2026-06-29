@@ -774,7 +774,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.0',
+                version: '2.1.0',
                 browser: 'chrome'
             };
 
@@ -864,9 +864,9 @@
 
             window.removeXHInstallPrompts = function removeXHInstallPrompts() {
                 const installTextPattern =
-                    /Cài đặt tiện ích|cài tiện ích|cài extension|install extension|extension is not connected|Chưa kết nối extension/i;
+                    /Cài đặt tiện ích|cài tiện ích|cài extension|cần tiện ích|install extension|extension is not connected|Chưa kết nối extension/i;
                 const containers = document.querySelectorAll(
-                    '.swal2-container, .ant-modal-root, .ant-modal-wrap, .ant-modal, [role="dialog"]'
+                    '.swal2-container, .ant-modal-root, .ant-modal-wrap, .ant-modal, .ant-alert, [role="alert"], [role="dialog"]'
                 );
 
                 containers.forEach(container => {
