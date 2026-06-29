@@ -529,11 +529,6 @@
                 '/downloader',
                 '/zalo',
                 '/zalo-tools',
-                '/autorun',
-                '/auto/comment',
-                '/auto-post-fb',
-                '/apis',
-                '/n8n',
                 '/activities',
                 '/posts',
                 '/friends',
@@ -582,6 +577,18 @@
                 /wheelofnames/i,
                 /duckrace/i,
                 /aurora\s+os/i,
+                /tự\s*động\s*h[oó]a/i,
+                /tu\s*dong\s*hoa/i,
+                /\bautomation\b/i,
+                /\bautorun\b/i,
+                /\btự\s*chạy\b/i,
+                /\btu\s*chay\b/i,
+                /^bình\s*luận$/i,
+                /^binh\s*luan$/i,
+                /^đăng\s*bài$/i,
+                /^dang\s*bai$/i,
+                /^apis?$/i,
+                /^n8n$/i,
                 /\bwin\s*(11|10|xp|98|96)\b/i,
                 /youtube/i
             ];
@@ -591,6 +598,11 @@
                 '/products',
                 '/youtube-subs',
                 '/search',
+                '/autorun',
+                '/auto/comment',
+                '/auto-post-fb',
+                '/apis',
+                '/n8n',
                 '/ip-info',
                 '/ip-location',
                 '/github-osint',
@@ -914,7 +926,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.4',
+                version: '2.1.5',
                 browser: 'chrome'
             };
 
@@ -1037,8 +1049,13 @@
                     if (!href) return false;
                     let path = href;
                     try {
-                        path = new URL(href, window.location.origin).pathname;
+                        const url = new URL(href, window.location.origin);
+                        const hashPath = url.hash.replace(/^#/, '').split('?')[0];
+                        path = hashPath.startsWith('/') ? hashPath : url.pathname;
                     } catch (error) {}
+                    if (String(path).includes('#/')) {
+                        path = String(path).slice(String(path).indexOf('#/') + 1).split('?')[0];
+                    }
                     return removedPaths.some(removedPath => path === removedPath || path.startsWith(`${removedPath}/`));
                 };
 
@@ -1077,7 +1094,7 @@
                 const hashPath = window.location.hash.replace(/^#/, '').split('?')[0] || '/';
                 const browserPath = window.location.pathname;
                 const activePath = browserPath === '/' ? hashPath : browserPath;
-                if (!window.XH_ALLOWED_PATHS.has(activePath) && removedPaths.includes(activePath)) {
+                if (removedPaths.some(removedPath => activePath === removedPath || activePath.startsWith(`${removedPath}/`))) {
                     window.history.replaceState(null, '', `${window.location.origin}/#/`);
                 }
             };
@@ -1112,11 +1129,10 @@
                         <div>
                             <h1 class="xh-dashboard-title">${window.XH_BRAND.name}</h1>
                             <p class="xh-dashboard-copy">
-                                Bộ công cụ Facebook automation, downloader và quản lý dữ liệu. Tài khoản đang ở trạng thái VIP, toàn bộ quyền đã được mở.
+                                Bộ công cụ Facebook downloader, dọn dữ liệu và quản lý nội dung. Tài khoản đang ở trạng thái VIP, toàn bộ quyền đã được mở.
                             </p>
                             <div class="xh-dashboard-actions">
                                 <a class="xh-dashboard-action primary" href="#/bulk-downloader"><i class="fa-solid fa-arrows-down-to-line"></i>Bulk Downloader</a>
-                                <a class="xh-dashboard-action" href="#/autorun"><i class="fa-solid fa-robot"></i>Automation</a>
                                 <a class="xh-dashboard-action" href="#/activities"><i class="fa-solid fa-broom"></i>Clean Facebook</a>
                                 <a class="xh-dashboard-action" href="${window.XH_BRAND.facebook}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i>Hỗ trợ</a>
                             </div>
