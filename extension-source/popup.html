@@ -73,43 +73,6 @@
         expiresAt: '2099-12-31T23:59:59.999Z'
       };
 
-      window.openXHLink = function openXHLink(url) {
-        try {
-          if (window.chrome?.tabs?.create) {
-            window.chrome.tabs.create({ url });
-            return;
-          }
-        } catch (error) {}
-        window.open(url, '_blank', 'noopener,noreferrer');
-      };
-
-      document.addEventListener('click', event => {
-        const element = event.target?.closest?.('a, button, [role="button"]');
-        if (!element) return;
-
-        const text = (element.textContent || '').replace(/\s+/g, ' ').trim();
-        const href = element.getAttribute?.('href') || '';
-        const combined = `${text} ${href}`;
-        let url = '';
-
-        if (/dashboard|trang chủ|open dashboard/i.test(combined)) {
-          url = window.XH_EXTENSION_BRAND.dashboard;
-        } else if (
-          /support|hỗ trợ|cần hỗ trợ|chrome webstore|webstore|chromewebstore/i.test(
-            combined
-          )
-        ) {
-          url = window.XH_EXTENSION_BRAND.support;
-        }
-
-        if (!url) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        window.openXHLink(url);
-      }, true);
-
       window.applyXHExtensionBranding = function applyXHExtensionBranding() {
         document.title = window.XH_EXTENSION_BRAND.name;
 
@@ -141,7 +104,7 @@
           if (/youtube|utils|pricing|price|webstore/i.test(text + ' ' + href)) {
             element.closest('button, a, .tool-subtab, .autorun-item, .tab-btn, div')?.classList.add('xh-hidden');
           }
-          if (href && /chromewebstore/i.test(href)) {
+          if (href && /chromewebstore|fbaio|fb-aio|facebook-all-in-one/i.test(href)) {
             element.setAttribute('href', window.XH_EXTENSION_BRAND.support);
           }
         });
