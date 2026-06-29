@@ -61,6 +61,154 @@
             })();
         </script>
 
+        <script>
+            (() => {
+                const BRIDGE_EVENT = 'aio-pagescript-sendto-contentscript';
+                const RESPONSE_PREFIX = 'aio-contentscript-sendto-pagescript';
+                const MANIFEST = {
+                    name: 'xH all in one',
+                    version: '2.1.21',
+                    browser: 'chrome'
+                };
+
+                if (!window.installXHRuntimeBridge) {
+                    window.installXHRuntimeBridge = function installXHRuntimeBridge() {
+                        if (window.__XH_RUNTIME_BRIDGE_INSTALLED) return;
+
+                        const originalChrome = window.chrome || {};
+                        const originalRuntime = originalChrome.runtime || {};
+                        const originalSendMessage = originalRuntime.sendMessage;
+
+                        const setLastError = message => {
+                            try {
+                                window.chrome.runtime.lastError = message ? { message } : null;
+                            } catch (error) {}
+                        };
+
+                        const sendThroughContentScript = (message, callback, timeout = 30000) => {
+                            const uuid = Math.random().toString(36).slice(2);
+                            const eventName = `${RESPONSE_PREFIX}${uuid}`;
+                            let settled = false;
+                            let timer = null;
+
+                            const finish = (data, errorMessage) => {
+                                if (settled) return;
+                                settled = true;
+                                if (timer) window.clearTimeout(timer);
+                                window.removeEventListener(eventName, onResponse);
+                                setLastError(errorMessage || null);
+
+                                if (typeof callback === 'function') {
+                                    callback(errorMessage ? { error: errorMessage } : data);
+                                }
+
+                                if (errorMessage) {
+                                    window.setTimeout(() => setLastError(null), 0);
+                                }
+                            };
+
+                            const onResponse = event => {
+                                const data = event?.detail?.data;
+                                if (data == null) {
+                                    finish(null, 'Extension bridge returned empty response');
+                                    return;
+                                }
+                                finish(data, null);
+                            };
+
+                            window.addEventListener(eventName, onResponse, { once: true });
+                            timer = window.setTimeout(
+                                () => finish(null, 'Extension bridge timeout'),
+                                timeout
+                            );
+
+                            try {
+                                window.dispatchEvent(
+                                    new CustomEvent(BRIDGE_EVENT, {
+                                        detail: {
+                                            uuid,
+                                            event: 'aio-runInBackground',
+                                            data: message
+                                        }
+                                    })
+                                );
+                            } catch (error) {
+                                finish(null, error?.message || 'Extension bridge dispatch failed');
+                            }
+
+                            return undefined;
+                        };
+
+                        const sendMessage = function sendMessage(
+                            extensionIdOrMessage,
+                            messageOrCallback,
+                            callback
+                        ) {
+                            let message = messageOrCallback;
+                            let cb = callback;
+
+                            if (
+                                typeof extensionIdOrMessage === 'object' ||
+                                typeof extensionIdOrMessage === 'undefined'
+                            ) {
+                                message = extensionIdOrMessage;
+                                cb =
+                                    typeof messageOrCallback === 'function'
+                                        ? messageOrCallback
+                                        : callback;
+                            }
+
+                            if (!message || typeof message !== 'object') {
+                                if (typeof originalSendMessage === 'function') {
+                                    try {
+                                        return originalSendMessage.apply(originalRuntime, arguments);
+                                    } catch (error) {
+                                        if (typeof cb === 'function') {
+                                            cb({ error: error?.message || String(error) });
+                                        }
+                                    }
+                                } else if (typeof cb === 'function') {
+                                    cb({ error: 'Invalid extension message' });
+                                }
+                                return undefined;
+                            }
+
+                            return sendThroughContentScript(message, cb);
+                        };
+
+                        const runtime = {
+                            ...originalRuntime,
+                            sendMessage,
+                            getManifest() {
+                                return { ...MANIFEST };
+                            }
+                        };
+
+                        try {
+                            window.chrome = {
+                                ...originalChrome,
+                                runtime
+                            };
+                        } catch (error) {
+                            try {
+                                Object.defineProperty(window, 'chrome', {
+                                    configurable: true,
+                                    value: {
+                                        ...originalChrome,
+                                        runtime
+                                    }
+                                });
+                            } catch (defineError) {}
+                        }
+
+                        window.__XH_RUNTIME_BRIDGE_INSTALLED = true;
+                    };
+                }
+
+                window.installXHRuntimeBridge();
+            })();
+        </script>
+
         <link
             rel="preload"
             href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
@@ -1002,7 +1150,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.20',
+                version: '2.1.21',
                 browser: 'chrome'
             };
 
@@ -1045,7 +1193,6 @@
                 };
                 window.XH_EXTENSION_STATE = nextState;
                 window.__XH_ALL_IN_ONE_EXTENSION_READY = true;
-                window.__FBAIO_EXTENSION_LISTENER_READY = true;
                 window.XH_ALL_IN_ONE_EXTENSION = nextState;
                 window.FBAIO_EXTENSION = nextState;
                 document.documentElement.dataset.xhExtension = 'ready';
@@ -1072,6 +1219,7 @@
             };
 
             window.pingXHExtension = function pingXHExtension(timeout = 700) {
+                window.installXHRuntimeBridge?.();
                 if (window.__XH_EXTENSION_PINGING) return window.__XH_EXTENSION_PINGING;
 
                 window.__XH_EXTENSION_PINGING = new Promise(resolve => {
@@ -1082,10 +1230,10 @@
                         if (timer) window.clearTimeout(timer);
                         window.removeEventListener(eventName, onResponse);
                         window.__XH_EXTENSION_PINGING = null;
-                        if (info) window.setXHExtensionReady(info);
+                        if (info && !info.error) window.setXHExtensionReady(info);
                         resolve(info);
                     };
-                    const onResponse = event => done(event?.detail?.data || window.XH_EXTENSION_STATE);
+                    const onResponse = event => done(event?.detail?.data || null);
 
                     window.addEventListener(eventName, onResponse, { once: true });
                     timer = window.setTimeout(() => done(null), timeout);
@@ -1111,10 +1259,7 @@
             };
 
             window.applyXHExtensionState = function applyXHExtensionState() {
-                window.setXHExtensionReady();
-                if (window.__FBAIO_EXTENSION_LISTENER_READY || document.documentElement.dataset.xhExtension === 'ready') {
-                    window.setXHExtensionReady();
-                }
+                window.installXHRuntimeBridge?.();
                 window.pingXHExtension();
             };
 
