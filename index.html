@@ -24,12 +24,7 @@
 
         <script>
             (() => {
-                const legacyHosts = new Set([
-                    'fbxh-all-in-one.org',
-                    'xh-all-in-one.org',
-                    'fb-aio.github.io',
-                    'fbaio.org'
-                ]);
+                const legacyHosts = new Set(['xh-all-in-one.org']);
                 const currentOrigin = window.location.origin;
                 const normalizeLegacyUrl = value => {
                     if (typeof value !== 'string') return value;
@@ -67,7 +62,7 @@
                 const RESPONSE_PREFIX = 'aio-contentscript-sendto-pagescript';
                 const MANIFEST = {
                     name: 'xH all in one',
-                    version: '2.1.22',
+                    version: '2.1.23',
                     browser: 'chrome'
                 };
 
@@ -1183,7 +1178,7 @@
                 ready: false,
                 id: 'xh-all-in-one',
                 name: window.XH_BRAND.name,
-                version: '2.1.22',
+                version: '2.1.23',
                 browser: 'chrome'
             };
 
