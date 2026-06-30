@@ -46,6 +46,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+extension-source/_metadata/
 
 # Optional npm cache directory
 .npm
